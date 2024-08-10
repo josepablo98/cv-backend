@@ -10,6 +10,24 @@ app.use(bodyParser.json());
 app.post('/send-email', (req, res) => {
   const { email, name, description } = req.body;
 
+  // Validar que los campos necesarios estén presentes
+  if (!email || !name || !description) {
+    return res.status(400).json({ message: 'Missing required fields: email, name, and description are required.' });
+  }
+
+  // Validar que el email tenga un formato válido
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Invalid email format.' });
+  }
+
+  // Validar que no haya otros campos en el cuerpo de la solicitud
+  const allowedFields = ['email', 'name', 'description'];
+  const extraFields = Object.keys(req.body).filter(field => !allowedFields.includes(field));
+  if (extraFields.length > 0) {
+    return res.status(400).json({ message: `Unexpected fields: ${extraFields.join(', ')}` });
+  }
+
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
