@@ -2,9 +2,12 @@ const express = require('express');
 const app = express();
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Importa el middleware cors
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8080;
+
+app.use(cors()); // Usa el middleware cors
 app.use(bodyParser.json());
 
 app.post('/send-email', (req, res) => {
